@@ -1,7 +1,8 @@
+import { createTransferCheckedInstruction, getAssociatedTokenAddress, getMint } from "@solana/spl-token"
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base"
 import { clusterApiUrl, Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js"
 import { NextApiRequest, NextApiResponse } from "next"
-import { shopAddress } from "../../lib/addresses"
+import { shopAddress, usdcAddress } from "../../lib/addresses"
 import calculatePrice from "../../lib/calculatePrice"
 
 export type MakeTransactionInputData = {
@@ -48,6 +49,14 @@ export default async function handler(
         const endpoint = clusterApiUrl(network)
         const connection = new Connection(endpoint)
 
+        // Get details about USDC token
+        const usdcMint = await getMint(connection, usdcAddress)
+        // Get buyer's USDC token account address
+        const buyerUsdcAddress = await getAssociatedTokenAddress(usdcAddress, buyerPublicKey)
+        // Get shop's USDC token account address
+        const shopUsdcAddress = await getAssociatedTokenAddress(usdcAddress, shopPublicKey)
+        
+
         // Get a recent blockhash to include in the transaction
         const { blockhash } = await (connection.getLatestBlockhash('finalized'))
 
@@ -58,11 +67,21 @@ export default async function handler(
         })
 
         //Create the instruction to send SOL from the buyer to the shop
-        const transferInstruction = SystemProgram.transfer({
-            fromPubkey: buyerPublicKey,
-            lamports: amount.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
-            toPubkey: shopPublicKey,
-        })
+        // const transferInstruction = SystemProgram.transfer({
+        //     fromPubkey: buyerPublicKey,
+        //     lamports: amount.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
+        //     toPubkey: shopPublicKey,
+        // })
+
+        // create instruction to send USDC from the buyer to the shop
+        const transferInstruction = createTransferCheckedInstruction(
+            buyerUsdcAddress, //source addy
+            usdcAddress, //mint token addy
+            shopUsdcAddress, //destination addy
+            buyerPublicKey, //owner of source addy
+            amount.toNumber() * (10 ** (await usdcMint).decimals), //amount to transfer (in units of USDC token)
+            usdcMint.decimals, //decimals of the USDC token
+        )
 
         // Add the reference to the instruction as a key
         // This will mean this transaction is returned when we query for the reference
@@ -80,7 +99,7 @@ export default async function handler(
             //We will need the buyer to sign this transaction after it's returned to them
             requireAllSignatures: false
         })
-        const base64 = serializedTransaction.toString('base64url')
+        const base64 = serializedTransaction.toString('base64')
 
         // Insert into database: reference, amount
 
