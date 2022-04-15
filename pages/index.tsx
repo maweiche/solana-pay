@@ -10,7 +10,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl items-stretch m-auto pt-24">
-      <SiteHeading>Cookies Inc</SiteHeading>
+      <SiteHeading>Buildspace Pizzeria</SiteHeading>
 
       {/* solana wallet collect button */}
       <div className="basis-1/4">

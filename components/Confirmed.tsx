@@ -3,7 +3,7 @@ import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
 export default function Confirmed() {
     const [percentage, setPercentage] = useState(0)
-    const [text, setText] = useState('🍪')
+    const [text, setText] = useState('🍕')
 
     useEffect(() => {
         const t1 = setTimeout(() => setPercentage(100), 100)

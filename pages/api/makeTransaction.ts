@@ -106,7 +106,7 @@ export default async function handler(
         // Return the serialized transaction
         res.status(200).json({
             transaction: base64,
-            message: "Thanks for your order!  🍪"
+            message: "Thanks for your order!  🍕"
         })
     } catch (err) {
         console.error(err);
