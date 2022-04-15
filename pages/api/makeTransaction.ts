@@ -9,6 +9,11 @@ export type MakeTransactionInputData = {
     account: string,
 }
 
+type MakeTransactionGetResponse = {
+    label: string,
+    icon: string,
+}
+
 export type MakeTransactionOutputData = {
     transaction: string,
     message: string,
@@ -18,100 +23,110 @@ type ErrorOutput = {
     error: string
 }
 
-export default async function handler(
+function get(res: NextApiResponse<MakeTransactionGetResponse>) {
+    res.status(200).json({
+        label: "BuildSpace Pizzeria",
+        icon: "https://freesvg.org/img/Pizza_Pepperoni.png"
+    })
+}
+
+async function post(
     req: NextApiRequest,
     res: NextApiResponse<MakeTransactionOutputData | ErrorOutput>
 ) {
     try {
-        // Pass selected items into the query THEN calculate expected cost
+        // Pass the selected items in the query, calculate the expected cost
         const amount = calculatePrice(req.query)
-        if (amount.toNumber() === 0) {
-            res.status(400).json({ error: "Can't checkout with charge of 0" })
+        if(amount.toNumber() === 0) {
+            res.status(400).json({ error: "Can not checkout with the charge of 0" })
             return
         }
 
-        // pass the reference to use in query
+        //Pass the reference to use in the query
         const { reference } = req.query
         if (!reference) {
             res.status(400).json({ error: "No reference provided" })
             return
         }
 
-        // Pass the buyer's public key in JSON body
+        //Pass the buyer's public key in JSON body
         const { account } = req.body as MakeTransactionInputData
         if (!account) {
-            res.status(400).json({ error: "No account provided" })
+            res.status(40).json({ error: "No account provided" })
+            return
         }
         const buyerPublicKey = new PublicKey(account)
         const shopPublicKey = shopAddress
-        
         const network = WalletAdapterNetwork.Devnet
         const endpoint = clusterApiUrl(network)
         const connection = new Connection(endpoint)
 
-        // Get details about USDC token
+        // Get details about the USDC token
         const usdcMint = await getMint(connection, usdcAddress)
-        // Get buyer's USDC token account address
+        //Get buyer's USDC token account addy
         const buyerUsdcAddress = await getAssociatedTokenAddress(usdcAddress, buyerPublicKey)
-        // Get shop's USDC token account address
+        //Get shop's USDC token account addy
         const shopUsdcAddress = await getAssociatedTokenAddress(usdcAddress, shopPublicKey)
-        
-
-        // Get a recent blockhash to include in the transaction
-        const { blockhash } = await (connection.getLatestBlockhash('finalized'))
+        //Get a recent blockhash to include in the transaction
+        const { blockhash } = await(connection.getLatestBlockhash('finalized'))
 
         const transaction = new Transaction({
             recentBlockhash: blockhash,
-            // BUYER pays the transaction fee (means buyer must sign txn)
+            //buyer pays transaction fee
             feePayer: buyerPublicKey,
         })
-
-        //Create the instruction to send SOL from the buyer to the shop
-        // const transferInstruction = SystemProgram.transfer({
-        //     fromPubkey: buyerPublicKey,
-        //     lamports: amount.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
-        //     toPubkey: shopPublicKey,
-        // })
-
-        // create instruction to send USDC from the buyer to the shop
+        // Create the instruction to send USDC from the buyer to the shop
         const transferInstruction = createTransferCheckedInstruction(
-            buyerUsdcAddress, //source addy
-            usdcAddress, //mint token addy
-            shopUsdcAddress, //destination addy
-            buyerPublicKey, //owner of source addy
-            amount.toNumber() * (10 ** (await usdcMint).decimals), //amount to transfer (in units of USDC token)
-            usdcMint.decimals, //decimals of the USDC token
-        )
-
-        // Add the reference to the instruction as a key
-        // This will mean this transaction is returned when we query for the reference
-        transferInstruction.keys.push({
-            pubkey: new PublicKey(reference),
-            isSigner: false,
-            isWritable: false,
-        })
-
-        // Add the instruction to the transaction
-        transaction.add(transferInstruction)
-
-        //Serialize the transaction and convert to base64 to return it
-        const serializedTransaction = transaction.serialize({
-            //We will need the buyer to sign this transaction after it's returned to them
-            requireAllSignatures: false
-        })
-        const base64 = serializedTransaction.toString('base64')
-
-        // Insert into database: reference, amount
-
-        // Return the serialized transaction
-        res.status(200).json({
-            transaction: base64,
-            message: "Thanks for your order!  🍕"
-        })
+        buyerUsdcAddress, // source
+        usdcAddress, // mint (token address)
+        shopUsdcAddress, // destination
+        buyerPublicKey, // owner of source address
+        amount.toNumber() * (10 ** usdcMint.decimals), // amount to transfer (in units of the USDC token)
+        usdcMint.decimals, // decimals of the USDC token
+      )
+  
+      // Add the reference to the instruction as a key
+      // This will mean this transaction is returned when we query for the reference
+      transferInstruction.keys.push({
+        pubkey: new PublicKey(reference),
+        isSigner: false,
+        isWritable: false,
+      })
+  
+      // Add the instruction to the transaction
+      transaction.add(transferInstruction)
+  
+      // Serialize the transaction and convert to base64 to return it
+      const serializedTransaction = transaction.serialize({
+        // We will need the buyer to sign this transaction after it's returned to them
+        requireAllSignatures: false
+      })
+      const base64 = serializedTransaction.toString('base64')
+  
+      // Insert into database: reference, amount
+  
+      // Return the serialized transaction
+      res.status(200).json({
+        transaction: base64,
+        message: "Thanks for your order! 🍕",
+      })
     } catch (err) {
-        console.error(err);
-
-        res.status(500).json({ error: 'error creating transaction', })
-        return
+      console.error(err);
+  
+      res.status(500).json({ error: 'error creating transaction', })
+      return
     }
 }
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<MakeTransactionGetResponse | MakeTransactionOutputData | ErrorOutput>
+  ) {
+    if (req.method === "GET") {
+      return get(res)
+    } else if (req.method === "POST") {
+      return await post(req, res)
+    } else {
+      return res.status(405).json({ error: "Method not allowed" })
+    }
+  }
