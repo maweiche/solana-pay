@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
-
+import CouponBook from '../components/CouponBook'
 import Products from '../components/Products'
 import SiteHeading from '../components/SiteHeading'
 
@@ -17,8 +17,11 @@ export default function HomePage() {
         <WalletMultiButton className='!bg-gray-900 hover:scale-105' />
       </div>
 
+      {/* display coupon book if there's a connected wallet */}
+      {publicKey && <CouponBook />}
+
       {/* disable checking out without wallet connected */}
-      <Products submitTarget='/checkout' enabled={publicKey !== null} />
+      <Products submitTarget='/buy/transaction' enabled={publicKey !== null} />
     </div>
   )
 }
