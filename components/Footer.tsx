@@ -1,14 +1,16 @@
 export default function Footer() {
+  
+  const TWITTER_HANDLE = '_buildspace';
+  const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+
   return (
-    <footer className="flex w-full justify-center border-t-2 bg-opacity-25 border-gray-900 py-12 h-10">
-      <a
-        href='https://www.buildspace.so'
-        target='_blank'
-        rel='noopener noreferrer'
-      >
-        Built with {" "}
-        <span>Buildspace</span>
-      </a>
+    <footer className="flex w-full justify-center  bg-opacity-25 bg-violet-900 p-5">
+            <a
+            className="footer-text"
+            href={TWITTER_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`built with @${TWITTER_HANDLE}`}</a>
     </footer>
   )
 }
