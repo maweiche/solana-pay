@@ -1,3 +1,4 @@
+import { resolveHref } from 'next/dist/shared/lib/router/router';
 import { useEffect, useState } from 'react';
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
@@ -8,7 +9,7 @@ export default function Confirmed() {
     useEffect(() => {
         const t1 = setTimeout(() => setPercentage(100), 100)
         const t2 = setTimeout(() => setText('✅'), 600)
-
+        
         return () => {
             clearTimeout(t1)
             clearTimeout(t2)
