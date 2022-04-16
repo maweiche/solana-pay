@@ -16,14 +16,14 @@ export default function Products({ submitTarget, enabled }: Props) {
         <div className="grid grid-cols-2 gap-8">
           {products.map(product => {
             return (
-              <div className="rounded-md bg-white text-left p-8" key={product.id}>
-                <h3 className="text-2xl font-bold">{product.name}</h3>
-                <p className="text-sm text-gray-800">{product.description}</p>
+              <div className="rounded-md bg-violet-700 text-white bg-opacity-50 text-left p-8" key={product.id}>
+                <h3 className="text-2xl text-white font-bold">{product.name}</h3>
+                <p className="text-sm text-white-800">{product.description}</p>
                 <p className="my-4">
                   <span className="mt-4 text-xl font-bold">{product.priceUsd} USD</span>
-                  {product.unitName && <span className="text-sm text-gray-800"> /{product.unitName}</span>}
+                  {product.unitName && <span className="text-sm text-white-800"> /{product.unitName}</span>}
                 </p>
-                <div className="mt-1">
+                <div className="mt-1 text-black">
                   <NumberInput name={product.id} formRef={formRef} />
                 </div>
               </div>
@@ -33,7 +33,7 @@ export default function Products({ submitTarget, enabled }: Props) {
         </div>
 
         <button
-          className="items-center px-20 rounded-md py-2 max-w-fit self-center bg-gray-900 text-white hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="items-center px-20 rounded-md py-2 max-w-fit self-center bg-cyan-900 text-white hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!enabled}
         >
           Checkout

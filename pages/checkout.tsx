@@ -115,7 +115,7 @@ export default function Checkout() {
       <div className='flex flex-col gap-8 items-center'>
         <div><BackLink href='/'>Cancel</BackLink></div>
 
-        <WalletMultiButton />
+        <WalletMultiButton className='!bg-indigo-600 hover:bg-indigo-900'/>
 
         <p>You need to connect your wallet to make transactions</p>
       </div>
