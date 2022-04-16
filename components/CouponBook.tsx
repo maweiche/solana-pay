@@ -44,7 +44,7 @@ export default function CouponBook() {
                 <p>Collect 5 slices of pizza to receive a 50% discount on your next purchase!</p>
 
                 <p className="flex flex-row gap-1 place-self-center">
-                {[...Array(couponBalance)].map((_, i) => <span key={i}>🍪</span>)}
+                {[...Array(couponBalance)].map((_, i) => <span key={i}>🍕</span>)}
                 {[...Array(notCollected)].map((_, i) => <span key={i}>⚪</span>)}
                 </p>
             </div>
