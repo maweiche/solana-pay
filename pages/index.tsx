@@ -15,7 +15,7 @@ export default function HomePage() {
 
       {/* solana wallet collect button */}
       <div className="basis-1/4">
-        <WalletMultiButton className='!bg-indigo-600 hover:!bg-indigo-900' />
+        <WalletMultiButton className='!bg-indigo-600 hover:!bg-indigo-900 hover:scale-110 focus:ring focus:ring-violet-300 transition delay-100' />
       </div>
 
       {/* display coupon book if there's a connected wallet */}
