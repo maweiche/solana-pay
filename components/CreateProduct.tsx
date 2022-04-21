@@ -1,13 +1,37 @@
 import React, { useState } from "react";
-// import { FileUpload } from "react-ipfs-uploader";
+import { create } from "ipfs-http-client";
+
+const client = create('https://ipfs.infura.io:5001/api/v0');
 
 
 const CreateProduct = (props: any) => {
-    const [fileUrl, setFileUrl] = useState('')
-    
+    // const uploadLinks =[];
+    const [newProduct, setNewProduct] = useState({
+        name: "",
+        price: "",
+        desc: "",
+        url: "",
+      });
+      const [file, setFile] = useState({});
+      const [uploading, setUploading] = useState(false)
+
+      async function onChange(e: any) {
+        setUploading(true);
+        const files = e.target.files;
+        try {
+          console.log(files[0]);
+          const added = await client.add(files[0]);
+          const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+          setFile({ name: files[0].name, url: url });
+        } catch (error) {
+          console.log("Error uploading file: ", error);
+        }
+        setUploading(false);
+
     if(!props.show) {
         return null
     }
+}
 
     return (
         <div>
@@ -15,14 +39,47 @@ const CreateProduct = (props: any) => {
                 <header className='modal-header'>
                     <h1 className='text-xl font-bold text-white text-center'>Create Product</h1>
                 </header>
-                {/* <FileUpload setUrl={setFileUrl} />
-                FileUrl : <a    
-                    href={fileUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    {fileUrl}
-                </a> */}
+                <input
+          type="file"
+          accept=".zip,.rar,.7zip,.jpg,.pdf,.png"
+          placeholder="Test"
+          onChange={onChange}
+        />
+        {/* {file != null && <p className="file-name">{file}</p>} */}
+        <div className="flex-row">
+          <input
+            type="text"
+            placeholder="Product Name"
+            onChange={(e) => {
+              setNewProduct({ ...newProduct, name: e.target.value });
+            }}
+          />
+          <input
+            type="text"
+            placeholder="0.015 Eth"
+            onChange={(e) => {
+              setNewProduct({ ...newProduct, price: e.target.value });
+            }}
+          />
+        </div>
+
+        <textarea
+          placeholder="Description here..."
+          onChange={(e) => {
+            setNewProduct({ ...newProduct, desc: e.target.value });
+          }}
+        />
+
+        <button
+            className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={() => {
+                console.log(file.url);
+                uploadLinks.push(file.url);
+                // console.log("these are the upload links", ...uploadLinks);
+            }}
+        >
+          Create Product
+        </button>
                 
                 <div className="modal-footer">
                 <button
