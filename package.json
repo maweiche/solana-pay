@@ -1,5 +1,9 @@
 {
   "private": true,
+  "engines": {
+    "node": "16.14.2",
+    "npm": "8.5"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
