@@ -28,12 +28,10 @@ const CreateProduct = (props: any) => {
           console.log("Error uploading file: ", error);
         }
         setUploading(false);
-
-    if(!props.show) {
-        return null
-    }
-}
-
+  }
+  if(!props.show) {
+    return null
+  }
     return (
         <div>
             <div className="input-container relative bg-white rounded-lg shadow dark:bg-violet-900">
@@ -94,6 +92,6 @@ const CreateProduct = (props: any) => {
             </div>
         </div>
     );
-}
+  }
 
 export default CreateProduct;
