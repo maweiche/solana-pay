@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { create } from "ipfs-http-client";
 
-const client = create('https://ipfs.infura.io:5001/api/v0');
-// const client = create();
+const client = create({ url: "https://ipfs.infura.io:5001/api/v0" });
+
 
 
 const CreateProduct = (props: any) => {
@@ -15,12 +15,12 @@ const CreateProduct = (props: any) => {
       });
       const [file, setFile] = useState({});
       const [uploading, setUploading] = useState(false)
-
+      
       async function onChange(e: any) {
         setUploading(true);
         const files = e.target.files;
         try {
-          console.log(files[0]);
+          console.log("these are the files",files[0]);
           const added = await client.add(files[0]);
           const url = `https://ipfs.infura.io/ipfs/${added.path}`;
           setFile({ name: files[0].name, url: url });
