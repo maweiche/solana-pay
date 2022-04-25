@@ -3,10 +3,15 @@ import { create } from "ipfs-http-client";
 
 const client = create({ url: "https://ipfs.infura.io:5001/api/v0" });
 
+type ProductFile = {
+  name: string,
+  url: string;
+}
 
+var ProductArr: ProductFile[] = [];
 
 const CreateProduct = (props: any) => {
-    // const uploadLinks =[];
+
     const [newProduct, setNewProduct] = useState({
         name: "",
         price: "",
@@ -28,7 +33,8 @@ const CreateProduct = (props: any) => {
           console.log("Error uploading file: ", error);
         }
         setUploading(false);
-  }
+  } 
+ var ProductFile = Object.values(file);
   if(!props.show) {
     return null
   }
@@ -74,8 +80,8 @@ const CreateProduct = (props: any) => {
             onClick={() => {
                 //file returns keys, need to access keys, then just target the url in index
                 console.log(Object.values(file)[1]);
-                // uploadLinks.push(file.url);
-                // console.log("these are the upload links", ...uploadLinks);
+                // push file names into productDisplay for mapping
+                console.log("this is the product file",ProductFile);
             }}
         >
           Create Product

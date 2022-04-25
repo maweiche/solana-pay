@@ -14,12 +14,12 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-8 max-w-4xl items-stretch m-auto pt-24">
       <SiteHeading>Buildspace Pizza</SiteHeading>
-        <button 
+      {publicKey && <button 
           className='block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
           onClick={() => setShow(true) }
         >
           Create Product
-        </button>
+        </button>}
         <CreateProduct onClose={() => setShow(false)} show={show} />
       {/* solana wallet collect button */}
       <div className="basis-1/4">
