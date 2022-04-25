@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { create } from "ipfs-http-client";
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
+// const client = create();
 
 
 const CreateProduct = (props: any) => {
@@ -74,7 +75,7 @@ const CreateProduct = (props: any) => {
             className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             onClick={() => {
                 console.log(file.url);
-                uploadLinks.push(file.url);
+                // uploadLinks.push(file.url);
                 // console.log("these are the upload links", ...uploadLinks);
             }}
         >
