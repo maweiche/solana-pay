@@ -3,12 +3,8 @@ import { create } from "ipfs-http-client";
 
 const client = create({ url: "https://ipfs.infura.io:5001/api/v0" });
 
-type ProductFile = {
-  name: string,
-  url: string;
-}
-
 let ProductArr: any[] = [];
+let PaidLinks: any[] =[];
 
 const CreateProduct = (props: any) => {
 
@@ -24,7 +20,7 @@ const CreateProduct = (props: any) => {
         setUploading(true);
         const files = e.target.files;
         try {
-          console.log("these are the files",files[0]);
+          // console.log("these are the files",files[0]);
           const added = await client.add(files[0]);
           const url = `https://ipfs.infura.io/ipfs/${added.path}`;
           setFile({ name: files[0].name, url: url, price: files[0].price, desc: files[0].desc });
@@ -33,9 +29,9 @@ const CreateProduct = (props: any) => {
         }
         setUploading(false);
   } 
+  // Grab a hold of the values we want to push into persisting arrays
   let ProductFile = Object.values(file);
   let ProductUrl = Object.values(file)[1];
-  // let obj = JSON.parse(ProductFile)
 
 
   if(!props.show) {
@@ -84,9 +80,12 @@ const CreateProduct = (props: any) => {
                 //file returns keys, need to access keys, then just target the url in index
                 console.log("this is the product file ->",ProductFile);
                 console.log("this is product url ->", ProductUrl);
-                // push file names into productDisplay for mapping
+                // push file names into ProductArr for mapping
                 ProductArr.push(newProduct)
                 console.log("this is ProductArr ->", ProductArr);
+                // push url into PaidLinks
+                PaidLinks.push(ProductUrl);
+                console.log("these are paid links ->", PaidLinks);
             }}
         >
           Create Product
