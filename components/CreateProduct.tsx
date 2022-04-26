@@ -8,7 +8,7 @@ type ProductFile = {
   url: string;
 }
 
-var ProductArr: ProductFile[] = [];
+let ProductArr: any[] = [];
 
 const CreateProduct = (props: any) => {
 
@@ -16,7 +16,6 @@ const CreateProduct = (props: any) => {
         name: "",
         price: "",
         desc: "",
-        url: "",
       });
       const [file, setFile] = useState({});
       const [uploading, setUploading] = useState(false)
@@ -28,13 +27,17 @@ const CreateProduct = (props: any) => {
           console.log("these are the files",files[0]);
           const added = await client.add(files[0]);
           const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-          setFile({ name: files[0].name, url: url });
+          setFile({ name: files[0].name, url: url, price: files[0].price, desc: files[0].desc });
         } catch (error) {
           console.log("Error uploading file: ", error);
         }
         setUploading(false);
   } 
- var ProductFile = Object.values(file);
+  let ProductFile = Object.values(file);
+  let ProductUrl = Object.values(file)[1];
+  // let obj = JSON.parse(ProductFile)
+
+
   if(!props.show) {
     return null
   }
@@ -79,9 +82,11 @@ const CreateProduct = (props: any) => {
             className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             onClick={() => {
                 //file returns keys, need to access keys, then just target the url in index
-                console.log(Object.values(file)[1]);
+                console.log("this is the product file ->",ProductFile);
+                console.log("this is product url ->", ProductUrl);
                 // push file names into productDisplay for mapping
-                console.log("this is the product file",ProductFile);
+                ProductArr.push(newProduct)
+                console.log("this is ProductArr ->", ProductArr);
             }}
         >
           Create Product
